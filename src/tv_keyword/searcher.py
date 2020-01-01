@@ -1,18 +1,29 @@
+import time
 import requests
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from src.tv_keyword.program import Program
 
 
 URL_BASE = 'https://tv.yahoo.co.jp/search/?q='
+SLEEP_SEC = 3
 
 
 class Searcher:
-    def __init__(self, *, url_base=URL_BASE):
+    def __init__(self, *, keyword: str, url_base=URL_BASE):
+        self.keyword = keyword
         self.url_base = url_base
 
-    def run(self, *, keyword: str) -> list:
+        parsed_url = urlparse(url_base)
+        self.url_scheme = parsed_url.scheme
+        self.url_domain = parsed_url.netloc
+
+    def run(self, *, url='') -> list:
         programs = []
-        res = requests.get('{}/{}'.format(self.url_base, keyword))
+        if not url:
+            url = '{}/{}'.format(self.url_base, self.keyword)
+
+        res = requests.get(url)
         soup = BeautifulSoup(res.text, 'html.parser')
 
         for prog in soup.select('.programlist > li'):
@@ -55,4 +66,20 @@ class Searcher:
 
             programs.append(program)
 
+        next_url = self._get_next_url(soup)
+        if next_url:
+            time.sleep(SLEEP_SEC)
+            programs.extend(self.run(url=next_url))
+
         return programs
+
+    def _get_next_url(self, soup):
+        navi_element = soup.select('div.yjMS.search_number.mb10 > p.floatr > a')
+        if len(navi_element) < 2:
+            return None
+
+        path = navi_element[1].get('href')
+        if not path:
+            return None
+
+        return '{0}://{1}{2}'.format(self.url_scheme, self.url_domain, path)
