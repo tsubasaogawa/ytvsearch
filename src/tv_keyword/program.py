@@ -5,6 +5,7 @@ class Program:
         self.is_on_air = False
 
         self.title = ''
+        self.is_repeated = False
         self.channel = ''
 
         self.genre = {}
