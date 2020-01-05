@@ -1,5 +1,5 @@
 # __init__.py
 
-from src.yahoo_tv_search.searcher import *
-from src.yahoo_tv_search.program import *
-from src.yahoo_tv_search.search_option import *
+from .searcher import *
+from .program import *
+from .search_option import *
