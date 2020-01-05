@@ -7,14 +7,16 @@ from .program import Program
 from .search_option import SearchOption
 
 
-URL_BASE = 'https://tv.yahoo.co.jp/search/'
-SLEEP_SEC = 1
-SHOW_NUM_IN_PAGE = 10
+DEFAULTS = {
+    'url_base': 'https://tv.yahoo.co.jp/search/',
+    'sleep_sec': 1,
+    'show_num_in_page': 10,
+}
 
 
 class Searcher:
     def __init__(self, *,
-                 url_base: str = URL_BASE
+                 url_base: str = DEFAULTS['url_base']
                  ):
         self.url_base = url_base
 
@@ -51,7 +53,7 @@ class Searcher:
         soup = BeautifulSoup(res.text, 'html.parser')
 
         programs = []
-        total_base = self.page_index * SHOW_NUM_IN_PAGE
+        total_base = self.page_index * DEFAULTS['show_num_in_page']
         for i, prog in enumerate(soup.select('.programlist > li')):
             if fetch_limit > 0 and total_base + i >= fetch_limit:
                 self.url = ''
@@ -62,7 +64,7 @@ class Searcher:
         self.url = self._fetch_next_url(soup)
         logging.debug('next_url is {0}'.format(self.url))
         if self.url:
-            time.sleep(SLEEP_SEC)
+            time.sleep(DEFAULTS['sleep_sec'])
             self.page_index += 1
             programs.extend(self.run(fetch_limit=fetch_limit))
 
@@ -133,7 +135,7 @@ class Searcher:
         broad_types_query = ' '.join(sorted(map(str, broad_types)))
 
         return '{base}?q={kwd}&t={broad}&a={pref}&oa={oa}&s={start}'.format(
-            base=URL_BASE,
+            base=DEFAULTS['url_base'],
             kwd=keyword,
             broad=broad_types_query,
             pref=prefecture,

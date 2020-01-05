@@ -7,6 +7,7 @@ sys.path.append(str(current_dir) + '/../')
 from src.tv_keyword.searcher import Searcher
 from src.tv_keyword.search_option import SearchOption
 
+
 KEYWORD = '北海道'
 
 if __name__ == '__main__':
