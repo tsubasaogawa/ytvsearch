@@ -46,7 +46,7 @@ class Searcher:
     def run(self, *,
             keyword: str = '',
             broad_types: list = [SearchOption.Broadcast.TERRESTRIAL],
-            prefecture: int = SearchOption.Prefecture.TOKYO,
+            prefecture: SearchOption.Prefecture = SearchOption.Prefecture.TOKYO,
             oa: int = 1,
             fetch_limit: int = 0) -> list:
         """
@@ -54,11 +54,11 @@ class Searcher:
 
         Args:
             keyword: keyword for search
-            broad_types (optional): search option; see SearchOption.Broadcast class
-            prefecture (optional): search option; see SearchOption.Prefecture class
+            broad_types (optional): search option; see SearchOption.Broadcast
+            prefecture (optional): search option; see SearchOption.Prefecture
             oa (optional): search option; constant value
             fetch_limit (optional): limit number of tv program to fetch
-        
+
         Returns:
             list: program list; see Program class
         """
@@ -106,7 +106,7 @@ class Searcher:
 
         Args:
             prog_element: program element by beautifulsoup
-        
+
         Returns:
             Program: program object
         """
@@ -157,7 +157,7 @@ class Searcher:
 
         Args:
             soup: beautifulsoup object
-        
+
         Returns:
             str: url; empty if url is not found
         """
@@ -176,7 +176,7 @@ class Searcher:
                             keyword: str,
                             *,
                             broad_types: list,
-                            prefecture: int,
+                            prefecture: SearchOption.Prefecture,
                             oa: int,
                             start_num: int = 1) -> str:
         """
@@ -184,15 +184,25 @@ class Searcher:
 
         Args:
             keyword: search keyword
-            broad_types: search option; see SearchOption.Broadcast class
-            prefecture: search option; see SearchOption.Prefecture class
+            broad_types: search option; see SearchOption.Broadcast
+            prefecture: search option; see SearchOption.Prefecture
             oa: search option; constant value
             start_num: start number of search items
-        
+
         Returns:
             string: url
         """
+        if type(broad_types) is not list:
+            raise TypeError('type of broad_types is list')
+
+        for broad_type in broad_types:
+            if type(broad_type) is not SearchOption.Broadcast:
+                raise TypeError('type of broad_type is SearchOption.Broadcast')
+
         broad_types_query = ' '.join(sorted(map(str, broad_types)))
+
+        if type(prefecture) is not SearchOption.Prefecture:
+            raise TypeError('type of prefecture is SearchOption.Prefecture')
 
         return '{base}?q={kwd}&t={broad}&a={pref}&oa={oa}&s={start}'.format(
             base=self._url_base,
