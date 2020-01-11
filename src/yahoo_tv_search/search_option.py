@@ -1,4 +1,8 @@
-from enum import Enum
+"""
+SearchOption enum class
+"""
+
+from enum import IntEnum
 
 
 class SearchOption:

@@ -1,12 +1,21 @@
+"""
+Searcher class
+
+Searcher returns keyword-related tv programs from yahoo japan.
+"""
+
 import logging
 import time
 import requests
+
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
+
 from .program import Program
 from .search_option import SearchOption
 
 
+# Define default values
 DEFAULTS = {
     'url_base': 'https://tv.yahoo.co.jp/search/',
     'sleep_sec': 1,
@@ -16,61 +25,91 @@ DEFAULTS = {
 
 class Searcher:
     def __init__(self, *,
-                 url_base: str = DEFAULTS['url_base']
-                 ):
-        self.url_base = url_base
+                 url_base: str = DEFAULTS['url_base']):
+        """
+        Constructor.
+
+        Args:
+            url_base (optional): yahoo tv search url without query parameters
+        """
+        self._url_base = url_base
 
         parsed_url = urlparse(url_base)
-        self.url_scheme = parsed_url.scheme
-        self.url_domain = parsed_url.netloc
+        self._url_scheme = parsed_url.scheme
+        self._url_domain = parsed_url.netloc
 
-        self.page_index = 0
-        self.url = ''
-
-        # logging.basicConfig(level=logging.DEBUG)
+        # paging index in scraping
+        self._page_index = 0
+        # scraping url as pointer
+        self._url = ''
 
     def run(self, *,
             keyword: str = '',
             broad_types: list = [SearchOption.Broadcast.TERRESTRIAL],
             prefecture: int = SearchOption.Prefecture.TOKYO,
             oa: int = 1,
-            fetch_limit: int = 0
-            ) -> list:
+            fetch_limit: int = 0) -> list:
+        """
+        Run scraping.
+
+        Args:
+            keyword: keyword for search
+            broad_types (optional): search option; see SearchOption.Broadcast class
+            prefecture (optional): search option; see SearchOption.Prefecture class
+            oa (optional): search option; constant value
+            fetch_limit (optional): limit number of tv program to fetch
+        
+        Returns:
+            list: program list; see Program class
+        """
         # First run
-        if not self.url:
+        if not self._url:
             if not keyword:
-                raise RuntimeError('either url or keyword is not null')
-            self.url = self._generate_start_url(
+                raise RuntimeError('either url or keyword is not empty')
+            # set search url with given arguments
+            self._url = self._generate_start_url(
                 keyword,
                 broad_types=broad_types,
                 prefecture=prefecture,
                 oa=oa
             )
-            self.page_index = 1
+            self._page_index = 1
 
-        res = requests.get(self.url)
-
+        res = requests.get(self._url)
         soup = BeautifulSoup(res.text, 'html.parser')
 
         programs = []
-        total_base = self.page_index * DEFAULTS['show_num_in_page']
-        for i, prog in enumerate(soup.select('.programlist > li')):
-            if fetch_limit > 0 and total_base + i >= fetch_limit:
-                self.url = ''
+        # base count of total number of programs
+        total_base = self._page_index * DEFAULTS['show_num_in_page']
+        for i, prog_elem in enumerate(soup.select('.programlist > li')):
+            total = total_base + i
+            # reach limit count
+            if fetch_limit > 0 and total >= fetch_limit:
+                self._url = ''
                 return programs
 
-            programs.append(self._fetch_program_data(prog))
+            programs.append(self._convert_to_program_object(prog_elem))
 
-        self.url = self._fetch_next_url(soup)
-        logging.debug('next_url is {0}'.format(self.url))
-        if self.url:
+        # set next url from scraped html
+        self._url = self._get_next_url(soup)
+        logging.debug('next_url is {0}'.format(self._url))
+        if self._url:
             time.sleep(DEFAULTS['sleep_sec'])
-            self.page_index += 1
+            self._page_index += 1
             programs.extend(self.run(fetch_limit=fetch_limit))
 
         return programs
 
-    def _fetch_program_data(self, prog_element) -> Program:
+    def _convert_to_program_object(self, prog_element) -> Program:
+        """
+        Convert program element to program object.
+
+        Args:
+            prog_element: program element by beautifulsoup
+        
+        Returns:
+            Program: program object
+        """
         program = Program()
 
         date_element = prog_element.select_one('.leftarea')
@@ -112,7 +151,16 @@ class Searcher:
 
         return program
 
-    def _fetch_next_url(self, soup) -> str:
+    def _get_next_url(self, soup) -> str:
+        """
+        Get next url from scraped html.
+
+        Args:
+            soup: beautifulsoup object
+        
+        Returns:
+            str: url; empty if url is not found
+        """
         navi_element = soup.select(
             'div.yjMS.search_number.mb10 > p.floatr > a')
         if len(navi_element) < 2:
@@ -122,23 +170,35 @@ class Searcher:
         if not path:
             return ''
 
-        return '{0}://{1}{2}'.format(self.url_scheme, self.url_domain, path)
+        return '{0}://{1}{2}'.format(self._url_scheme, self._url_domain, path)
 
     def _generate_start_url(self,
                             keyword: str,
                             *,
                             broad_types: list,
-                            prefecture: SearchOption.Prefecture,
+                            prefecture: int,
                             oa: int,
-                            start_num: int = 1
-                            ) -> str:
+                            start_num: int = 1) -> str:
+        """
+        Generate url with search keyword and some options.
+
+        Args:
+            keyword: search keyword
+            broad_types: search option; see SearchOption.Broadcast class
+            prefecture: search option; see SearchOption.Prefecture class
+            oa: search option; constant value
+            start_num: start number of search items
+        
+        Returns:
+            string: url
+        """
         broad_types_query = ' '.join(sorted(map(str, broad_types)))
 
         return '{base}?q={kwd}&t={broad}&a={pref}&oa={oa}&s={start}'.format(
-            base=DEFAULTS['url_base'],
+            base=self._url_base,
             kwd=keyword,
             broad=broad_types_query,
             pref=prefecture,
-            oa=1,
+            oa=oa,
             start=start_num
         )
