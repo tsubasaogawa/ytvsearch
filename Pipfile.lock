@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "275c5a32922a947fec4ea0abaffb3a89a7796c1a1376183346465bd5a402e9e5"
+            "sha256": "5e8ab2889e0a44f0fc5fcc60a79daadee9d8e7736266562769a951ef32713fa8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -68,6 +68,10 @@
             ],
             "index": "pypi",
             "version": "==1.25.7"
+        },
+        "ytvsearch": {
+            "editable": true,
+            "path": "."
         }
     },
     "develop": {

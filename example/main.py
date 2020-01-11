@@ -4,8 +4,8 @@ import sys
 current_dir = pathlib.Path(__file__).resolve().parent
 sys.path.append(str(current_dir) + '/../')
 
-from src.yahoo_tv_search.searcher import Searcher
-from src.yahoo_tv_search.search_option import SearchOption
+from src.ytvsearch.searcher import Searcher
+from src.ytvsearch.search_option import SearchOption
 
 
 KEYWORD = '北海道'

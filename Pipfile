@@ -10,6 +10,7 @@ pytest = "*"
 beautifulsoup4 = "==4.8.2"
 requests = "==2.22.0"
 urllib3 = "==1.25.7"
+ytvsearch = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
