@@ -6,7 +6,7 @@ from enum import IntEnum
 
 
 class SearchOption:
-    class Broadcast(Enum):
+    class Broadcast(IntEnum):
         BS = 1
         CS = 2
         TERRESTRIAL = 3
@@ -14,7 +14,7 @@ class SearchOption:
         def __str__(self):
             return str(self.value)
 
-    class Prefecture(Enum):
+    class Prefecture(IntEnum):
         SAPPORO = 10
         HAKODATE = 11
         ASAHIKAWA = 12
