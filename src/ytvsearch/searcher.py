@@ -74,7 +74,7 @@ class Searcher:
                 prefecture=prefecture,
                 oa=oa
             )
-            self._page_index = 1
+            self._page_index = 0
 
         res = requests.get(self._url)
         soup = BeautifulSoup(res.text, 'html.parser')
