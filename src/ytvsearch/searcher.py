@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 
 from .program import Program
 from .search_option import SearchOption
+from ytvsearch import ydatetime
 
 
 # Define default values
@@ -113,8 +114,10 @@ class Searcher:
         program = Program()
 
         date_element = prog_element.select_one('.leftarea')
-        program.date = date_element.select_one('.yjMS > em').get_text()
-        program.time = date_element.select_one('.yjMS ~ p > em').get_text()
+        program.date['start'], program.date['end'] = ydatetime.convert_to_datetimes(
+            date_element.select_one('.yjMS > em').get_text(),
+            date_element.select_one('.yjMS ~ p > em').get_text()
+        )
         program.is_on_air = date_element.select_one(
             '.mt10 > .onAir.yjMS'
         ) is not None

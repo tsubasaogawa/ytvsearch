@@ -6,6 +6,8 @@ from ytvsearch import ydatetime
 
 @pytest.mark.parametrize('ydate, ytime, tzinfo', [
     ('1/1（水）', '0:00～1:00', None),
+    ('1/1', '0:00～1:00', None),
+    ('1/1（水）', '0:00 ～ 1:00', None),
     ('1/12（日）', '0:00～1:00', None),
     ('10/1（木）', '0:00～1:00', None),
     ('10/12（月）', '0:00～1:00', None),
@@ -42,5 +44,17 @@ def test_convert_to_datetimes_returns_are_valid():
     ('1/12（日）', ''),
 ])
 def test_convert_to_datetimes_raise_when_arg_is_no_given(ydate, ytime):
+    with pytest.raises(ValueError):
+        ydatetime.convert_to_datetimes(ydate, ytime)
+
+
+@pytest.mark.parametrize('ydate, ytime', [
+    ('111/1（水）', '0:00～1:00'),
+    ('1/111（水）', '0:00～1:00'),
+    ('1/111(水)', '0:00～1:00'),
+    ('1/1（水）', '000:0～1:00'),
+    ('1/1（水）', '0:001:00'),
+])
+def test_convert_to_datetimes_raise_when_arg_is_invalid(ydate, ytime):
     with pytest.raises(ValueError):
         ydatetime.convert_to_datetimes(ydate, ytime)

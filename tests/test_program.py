@@ -9,8 +9,7 @@ def program():
 
 
 def test_program(program):
-    assert type(program.date) is str
-    assert type(program.time) is str
+    assert type(program.date) is dict
     assert type(program.is_on_air) is bool
     assert type(program.title) is str
     assert type(program.is_repeated) is bool

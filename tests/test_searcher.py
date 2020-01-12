@@ -35,8 +35,8 @@ def test_run_success(searcher, kw, broad, pref, oa):
 
     assert type(programs) is list
     for program in programs:
-        assert type(program.date) is str
-        assert type(program.time) is str
+        assert type(program.date) is dict
+        assert program.date['start'] <= program.date['end']
         assert type(program.is_on_air) is bool
         assert program.title != ''
         assert type(program.is_repeated) is bool

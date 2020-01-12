@@ -24,17 +24,25 @@ Attributes:
 
 class Program:
     def __init__(self):
-        self.date = ''
-        self.time = ''
+        self.date = {
+            'start': None,
+            'end': None,
+        }
         self.is_on_air = False
 
         self.title = ''
         self.is_repeated = False
         self.channel = ''
 
-        self.genre = {}
+        self.genre = {
+            'parent': '',
+            'child': '',
+        }
         self.description = ''
 
         self.impression_num = 0
-        self.evaluation = {}
+        self.evaluation = {
+            'average_pts': 0,
+            'total_num_vote': 0,
+        }
         self.mitai_num = 0

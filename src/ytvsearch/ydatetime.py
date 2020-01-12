@@ -10,7 +10,7 @@ import re
 
 
 REGEXES = {
-    'date': r'^(\d{1,2})\/(\d{1,2})',
+    'date': r'^(\d{1,2})\/(\d{1,2})(?:[^\d]|$)',
     'time': r'^(\d{1,2}):(\d{1,2})[^\d]+(\d{1,2}):(\d{1,2})$',
 }
 DEFAULT_TIMEDELTA = 9
@@ -60,14 +60,20 @@ def convert_to_datetimes(
 
 def _str2date(ydate: str, tz: tzinfo) -> datetime.date:
     year = datetime.datetime.now(tz=tz).year
-    matches = re.match(REGEXES['date'], ydate).groups()
+    match = re.match(REGEXES['date'], ydate)
+    if not match:
+        raise ValueError('ydate is invalid: {}'.format(ydate))
+    matches = match.groups()
     month, day = int(matches[0]), int(matches[1])
 
     return datetime.date(year, month, day)
 
 
 def _str2timedeltas(ytime: str) -> list:
-    matches = re.match(REGEXES['time'], ytime).groups()
+    match = re.match(REGEXES['time'], ytime)
+    if not match:
+        raise ValueError('ytime is invalid: {}'.format(ytime))
+    matches = match.groups()
     start = {'hour': int(matches[0]), 'minute': int(matches[1])}
     end = start if len(matches) != 4 else {
         'hour': int(matches[2]), 'minute': int(matches[3])
