@@ -1,3 +1,9 @@
+"""
+ydatetime module
+
+Utility module for datetime in yahoo japan.
+"""
+
 import datetime
 from datetime import timedelta, timezone, tzinfo
 import re
@@ -15,6 +21,21 @@ def convert_to_datetimes(
     ytime: str,
     tz: tzinfo = timezone(timedelta(hours=DEFAULT_TIMEDELTA))
 ) -> list:
+    """
+    Convert date strings to list of datetime objects.
+    ex. 1/1（水）23:00～25:00 -> [
+        datetime.datetime(this year, 1, 1, 23, 0),
+        datetime.datetime(this year, 1, 2, 2, 0)
+    ]
+
+    Args:
+        ydate: date string; ex. '1/1（水）'
+        ytime: time string; ex. '23:00～25:00'
+        tz: time zone; default is JST (+9)
+
+    Returns:
+        list: includes two datetime object
+    """
     if not ydate or not ytime:
         raise ValueError('ydate and ytime are required')
 
