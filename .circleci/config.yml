@@ -37,7 +37,10 @@ jobs:
           command: |
             # Avoid deprecation
             echo -e '[pytest]\njunit_family=legacy' > pytest.ini
-            pipenv run pytest tests --junitxml=test-reports/junit.xml
+            # Run tests ignoring searcher test because it generates some accesses to yahoo server.
+            pipenv run pytest tests \
+              --junitxml=test-reports/junit.xml \
+              --ignore=tests/test_searcher.py
 
       - store_test_results:
           path: test-reports
