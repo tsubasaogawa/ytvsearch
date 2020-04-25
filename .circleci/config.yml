@@ -23,7 +23,7 @@ jobs:
           name: "Install pipenv"
           command: |
             sudo pip install pipenv
-            pipenv install
+            pipenv install --dev
 
       - save_cache:
           key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
