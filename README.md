@@ -1,4 +1,4 @@
-# yahoo-tv-search
+# ytvsearch
 
 ## Overview
 
@@ -7,6 +7,12 @@
   - keyword
   - broad types (ex. BS, CS, terrestrial)
   - prefecture
+
+## Install
+
+```bash
+pip install ytvsearch
+```
 
 ## Sample
 
