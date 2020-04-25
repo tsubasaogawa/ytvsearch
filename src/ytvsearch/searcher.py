@@ -130,14 +130,16 @@ class Searcher:
         sub_texts = detail_element.select('.yjMS.pb5p')
         program.channel = sub_texts[0].select_one('.pr35').get_text()
         genre_element = sub_texts[0].select('.pr35 ~ span > a')
-        program.genre = {
-            'child': genre_element[0].get_text(),
-            'parent': genre_element[1].get_text(),
-        } if genre_element else {
-            'child': '',
-            'parent': '',
-        }
+        if genre_element:
+            program.genre = {
+                'child': genre_element[0].get_text(),
+                'parent': genre_element[1].get_text(),
+            }
         program.description = sub_texts[1].get_text()
+
+        if len(sub_texts) < 3:
+            return program
+
         program.impression_num = int(
             sub_texts[2].select_one('.pr35.floatl > a').get_text()
         )
