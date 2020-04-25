@@ -39,7 +39,7 @@ jobs:
             echo -e '[pytest]\njunit_family=legacy' > pytest.ini
             pipenv run pytest tests --junitxml=test-reports/junit.xml
 
-      - store-test-results:
+      - store_test_results:
           path: test-reports
 
       - store_artifacts:
