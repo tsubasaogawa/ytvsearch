@@ -1,0 +1,52 @@
+version: "2.1"
+
+jobs:
+  test:
+    docker:
+      - image: circleci/python:3.7
+        environment:
+          PIPENV_VENV_IN_PROJECT: true
+
+    steps:
+      - checkout
+
+      - run:
+          name: "Change owner"
+          command: |
+            sudo chown -R circleci:circleci /usr/local/bin
+            sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
+
+      - restore_cache:
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: "Install pipenv"
+          command: |
+            sudo pip install pipenv
+            pipenv install
+
+      - save_cache:
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.7/site-packages"
+
+      - run:
+          name: "Run test"
+          command: |
+            # Avoid deprecation
+            echo -e '[pytest]\njunit_family=legacy' > pytest.ini
+            pipenv run pytest tests --junitxml=test-reports/junit.xml
+
+      - store-test-results:
+          path: test-reports
+
+      - store_artifacts:
+          path: test-results
+
+workflows:
+  version: "2"
+  run_test:
+    jobs:
+      - test
