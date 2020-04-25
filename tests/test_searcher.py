@@ -15,22 +15,22 @@ def searcher():
     return Searcher()
 
 
-@pytest.mark.parametrize('kw, broad, pref, oa', [
-    ('Baseball', [SearchOption.Broadcast.TERRESTRIAL], SearchOption.Prefecture.SAPPORO, 1),
+@pytest.mark.parametrize('kw, broad, pref, oa, limit', [
+    ('Baseball', [SearchOption.Broadcast.TERRESTRIAL], SearchOption.Prefecture.SAPPORO, 1, 0),
     ('Baseball', [
         SearchOption.Broadcast.TERRESTRIAL,
         SearchOption.Broadcast.BS,
         SearchOption.Broadcast.CS
-    ], SearchOption.Prefecture.SAPPORO, 1),
-    ('Baseball', [SearchOption.Broadcast.TERRESTRIAL], SearchOption.Prefecture.SAPPORO, 0),
+    ], SearchOption.Prefecture.SAPPORO, 1, 10),
+    ('Baseball', [SearchOption.Broadcast.TERRESTRIAL], SearchOption.Prefecture.SAPPORO, 0, 10),
 ])
-def test_run_success(searcher, kw, broad, pref, oa):
+def test_run_success(searcher, kw, broad, pref, oa, limit):
     programs = searcher.run(
         keyword=kw,
         broad_types=broad,
         prefecture=pref,
         oa=oa,
-        fetch_limit=0
+        fetch_limit=limit
     )
 
     assert type(programs) is list
