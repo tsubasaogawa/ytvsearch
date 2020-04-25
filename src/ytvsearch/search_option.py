@@ -1,5 +1,9 @@
 """
 SearchOption enum class
+
+Subclasses:
+  Broadcast: type of broadcast
+  Prefecture: prefecture (Japan) number used at query parameter
 """
 
 from enum import IntEnum

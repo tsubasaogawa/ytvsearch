@@ -59,6 +59,16 @@ def convert_to_datetimes(
 
 
 def _str2date(ydate: str, tz: tzinfo) -> datetime.date:
+    """
+    Convert string to datetime.date object using defined regex pattern.
+
+    Args:
+      ydate: date string
+      tz: time zone
+
+    Returns:
+      date object
+    """
     year = datetime.datetime.now(tz=tz).year
     match = re.match(REGEXES['date'], ydate)
     if not match:
@@ -70,6 +80,15 @@ def _str2date(ydate: str, tz: tzinfo) -> datetime.date:
 
 
 def _str2timedeltas(ytime: str) -> list:
+    """
+    Convert string to timedelta object using defined regex pattern.
+
+    Args:
+      ytime: time string
+
+    Returns:
+      list of two timedelta objects (start time and end time)
+    """
     match = re.match(REGEXES['time'], ytime)
     if not match:
         raise ValueError('ytime is invalid: {}'.format(ytime))
