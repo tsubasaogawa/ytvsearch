@@ -1,5 +1,7 @@
 # ytvsearch
 
+[![CircleCI](https://circleci.com/gh/tsubasaogawa/ytvsearch.svg?style=svg)](https://circleci.com/gh/tsubasaogawa/ytvsearch)
+
 ## Overview
 
 - A simple tv program api by scraping [Yahoo Japan 番組表](https://tv.yahoo.co.jp/listings/realtime/).
